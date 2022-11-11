@@ -1,0 +1,7 @@
+**/bin
+**/obj
+**/Logs
+**/logs
+**/exe
+**/.vscode/
+**/.vs/
