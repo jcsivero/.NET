@@ -1,0 +1,48 @@
+{
+
+    "mesh_list" : [
+        {
+            "file" : "assets/sm_pawn.json",
+            "id" : "pawn"
+            
+        },
+        {
+            "file" : "assets/sm_cube.json",
+            "id" : "cube"
+        }
+    ],
+
+    "actor_list" : [
+        
+        {
+            "id" : "apawn",
+            "sm" : "pawn",
+            "enabled" : true,
+            "position" : [0.0,0.0,0.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0]
+        },
+        {
+            "id" : "aprop1",
+            "sm" : "cube",
+            "enabled" : true,
+            "position" : [0.0,0.0,-5.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0]
+
+        }
+
+    ],
+
+    "playerstartposition" : [0.0,0.0,0.0],
+    "playerstartrotationangle" : 0.0,
+    "playerstartrotationaxis" : [0.0,1.0,0.0]
+   
+
+}
