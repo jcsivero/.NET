@@ -44,7 +44,7 @@ public partial class Game : ComponentBase {
         2,6,5,
         //Bottom
         4,3,0,
-        //7,3,2
+        //7,3,2 //este valor creo que está mal. es un 4 y no un 2.
         7,3,4
     };
 
@@ -60,48 +60,96 @@ public partial class Game : ComponentBase {
     };*/
 
 private static readonly float[] cubeVertices =  {
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,1.0f,-1.0f,
-        1.0f,1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,1.0f,
-        -1.0f,1.0f,1.0f,
-        1.0f,1.0f,1.0f,
-        1.0f,-1.0f,1.0f
+        //Side Back
+        -1.0f,-1.0f,-1.0f, //0
+        -1.0f,1.0f,-1.0f, //1
+        1.0f,1.0f,-1.0f,  //2
+        1.0f,-1.0f,-1.0f, //3
+
+        //Front
+        -1.0f,-1.0f,1.0f, //4
+        -1.0f,1.0f,1.0f,  //5
+        1.0f,1.0f,1.0f,  //6
+        1.0f,-1.0f,1.0f,  //7
+
+        //Rigth
+        1.0f,1.0f,1.0f,  //6 as 8
+        1.0f,1.0f,-1.0f,  //2 as 9
+        1.0f,-1.0f,1.0f,  //7 as 10
+        1.0f,-1.0f,-1.0f, //3 as 11
+        //Left
+        -1.0f,1.0f,-1.0f, //1 as 12
+        -1.0f,-1.0f,1.0f, //4 as 13
+        -1.0f,1.0f,1.0f,  //5 as 14
+        -1.0f,-1.0f,-1.0f, //0 as 15
+        //Top
+        -1.0f,1.0f,-1.0f, //1 as 16
+        1.0f,1.0f,-1.0f,  //2 as 17
+        -1.0f,1.0f,1.0f,  //5 as 18
+        1.0f,1.0f,1.0f,  //6 as 19
+        //Bottom
+        -1.0f,-1.0f,-1.0f, //0 as 20
+        1.0f,-1.0f,-1.0f, //3 as 21
+        -1.0f,-1.0f,1.0f, //4 as 22
+        1.0f,-1.0f,1.0f  //7 as 23
+
     };
 
     private static readonly int[] intCubeIndices =  {
         //Back
         2,1,0,
         3,2,0,
-        //Right
-        6,2,3,
-        7,6,3,
-        //Left
-        1,4,0,
-        5,4,1,
         //Front
         5,7,4,
         6,7,5,
+        //Right
+        8,9,11,
+        10,8,11,
+        //Left
+        12,13,15,
+        14,13,12,
         //Top
-        2,5,1,
-        2,6,5,
+        17,18,16,
+        17,19,18,
         //Bottom
-        4,3,0,
-        //7,3,2
-        7,3,4
+        22,21,20,        
+        23,21,22
     };
 
     private float[] cubeColors= new [] {
+        //Back Red
         1.0f,0.0f,0.0f,1.0f,
         1.0f,0.0f,0.0f,1.0f,
         1.0f,0.0f,0.0f,1.0f,
         1.0f,0.0f,0.0f,1.0f,
+        //Front Green
         0.0f,1.0f,0.0f,1.0f,
         0.0f,1.0f,0.0f,1.0f,
         0.0f,1.0f,0.0f,1.0f,
-        0.0f,1.0f,0.0f,1.0f
-    }
+        0.0f,1.0f,0.0f,1.0f,
+        //Right Pink
+        1.0f,0.0f,1.0f,1.0f,
+        1.0f,0.0f,1.0f,1.0f,
+        1.0f,0.0f,1.0f,1.0f,
+        1.0f,0.0f,1.0f,1.0f,
+        //Left White
+        1.0f,1.0f,1.0f,1.0f,
+        1.0f,1.0f,1.0f,1.0f,
+        1.0f,1.0f,1.0f,1.0f,
+        1.0f,1.0f,1.0f,1.0f,
+        //Top Black
+        0.0f,0.0f,0.0f,1.0f,
+        0.0f,0.0f,0.0f,1.0f,
+        0.0f,0.0f,0.0f,1.0f,
+        0.0f,0.0f,0.0f,1.0f,
+        //Bottom Yellow
+        1.0f,1.0f,0.0f,1.0f,
+        1.0f,1.0f,0.0f,1.0f,
+        1.0f,1.0f,0.0f,1.0f,
+        1.0f,1.0f,0.0f,1.0f
+
+    };
+
 
     private static readonly ushort[] cubeIndices = Array.ConvertAll(intCubeIndices, val=>checked((ushort) val));
 
@@ -236,7 +284,7 @@ double far = 100.0f;
 
 this.ProyMat.Perspective((float)FOV,(float)r,(float)near,(float)far);
 
-Vector3 axis = new Vector3(0.0f,1.0f,1.0f);
+Vector3 axis = new Vector3(0.5f,0.5f,0.5f); //modifico vector inicial pra que se puedan ver las seis caras durante la rotación, de lo contrario, las caras Back y Bottom no se veían.
 axis.Normalize();
 delta = timeStamp-this.lastTimeStamp;
 this.lastTimeStamp = timeStamp;
