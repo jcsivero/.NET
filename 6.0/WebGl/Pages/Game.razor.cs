@@ -15,7 +15,7 @@ public partial class Game : ComponentBase {
     private WebGLContext _context;
     protected BECanvasComponent _canvasReference;
 
-    	private static readonly float[] cubeVertices =  {
+    	/*private static readonly float[] cubeVertices =  {
         -1.0f,-1.0f,-1.0f,
         -1.0f,1.0f,-1.0f,
         1.0f,1.0f,-1.0f,
@@ -27,18 +27,25 @@ public partial class Game : ComponentBase {
     };
 
     private static readonly int[] intCubeIndices =  {
+        //Back
         2,1,0,
         3,2,0,
+        //Right
         6,2,3,
         7,6,3,
+        //Left
         1,4,0,
         5,4,1,
+        //Front
         5,7,4,
         6,7,5,
+        //Top
         2,5,1,
         2,6,5,
+        //Bottom
         4,3,0,
-        7,3,2
+        //7,3,2
+        7,3,4
     };
 
     private float[] cubeColors= new [] {
@@ -50,8 +57,51 @@ public partial class Game : ComponentBase {
         0.0f,1.0f,0.0f,1.0f,
         0.0f,1.0f,0.0f,1.0f,
         0.0f,1.0f,0.0f,1.0f
+    };*/
+
+private static readonly float[] cubeVertices =  {
+        -1.0f,-1.0f,-1.0f,
+        -1.0f,1.0f,-1.0f,
+        1.0f,1.0f,-1.0f,
+        1.0f,-1.0f,-1.0f,
+        -1.0f,-1.0f,1.0f,
+        -1.0f,1.0f,1.0f,
+        1.0f,1.0f,1.0f,
+        1.0f,-1.0f,1.0f
     };
 
+    private static readonly int[] intCubeIndices =  {
+        //Back
+        2,1,0,
+        3,2,0,
+        //Right
+        6,2,3,
+        7,6,3,
+        //Left
+        1,4,0,
+        5,4,1,
+        //Front
+        5,7,4,
+        6,7,5,
+        //Top
+        2,5,1,
+        2,6,5,
+        //Bottom
+        4,3,0,
+        //7,3,2
+        7,3,4
+    };
+
+    private float[] cubeColors= new [] {
+        1.0f,0.0f,0.0f,1.0f,
+        1.0f,0.0f,0.0f,1.0f,
+        1.0f,0.0f,0.0f,1.0f,
+        1.0f,0.0f,0.0f,1.0f,
+        0.0f,1.0f,0.0f,1.0f,
+        0.0f,1.0f,0.0f,1.0f,
+        0.0f,1.0f,0.0f,1.0f,
+        0.0f,1.0f,0.0f,1.0f
+    }
 
     private static readonly ushort[] cubeIndices = Array.ConvertAll(intCubeIndices, val=>checked((ushort) val));
 
@@ -152,30 +202,6 @@ public partial class Game : ComponentBase {
 
     }
 	
-	/*protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        this._context = await this._canvasReference.CreateWebGLAsync();
-        this.vertexShader=await this.GetShader(vsSource,ShaderType.VERTEX_SHADER);
-        this.fragmentShader=await this.GetShader(fsSource,ShaderType.FRAGMENT_SHADER);
-
-        this.program= await this.BuildProgram(this.vertexShader,this.fragmentShader);
-        await this._context.DeleteShaderAsync(this.vertexShader);
-        await this._context.DeleteShaderAsync(this.fragmentShader);
-        await this.prepareBuffers();
-        await this.getAttributeLocations();
-
-        await this._context.ClearColorAsync(1, 0, 0, 1);
-        await this._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT);
-    }*/
-
-    
-    /*protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        this._context = await this._canvasReference.CreateWebGLAsync();
-    
-        await this._context.ClearColorAsync(1, 0, 0, 1);
-        await this._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT);
-    }*/
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         this._context = await this._canvasReference.CreateWebGLAsync();
