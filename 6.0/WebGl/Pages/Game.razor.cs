@@ -284,7 +284,7 @@ double far = 100.0f;
 
 this.ProyMat.Perspective((float)FOV,(float)r,(float)near,(float)far);
 
-Vector3 axis = new Vector3(0.5f,0.5f,0.5f); //modifico vector inicial pra que se puedan ver las seis caras durante la rotación, de lo contrario, las caras Back y Bottom no se veían.
+Vector3 axis = new Vector3(0.5f,0.5f,0.5f); //modifico vector para que se puedan ver las seis caras durante la rotación, de lo contrario, las caras Back y Bottom no se veían.
 axis.Normalize();
 delta = timeStamp-this.lastTimeStamp;
 this.lastTimeStamp = timeStamp;
