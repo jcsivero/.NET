@@ -1,0 +1,150 @@
+{
+
+    "mesh_list" : [
+        {
+            "file" : "assets/spaceship.json",
+            "id" : "pawn"
+            
+        },
+        {
+            "file" : "assets/sm_cube.json",
+            "id" : "cube"
+        }
+    ],
+
+    "actor_list" : [
+        
+        {
+            "id" : "apawn",
+            "type" : "staticmesh",
+            "sm" : "pawn",
+            "shadow" : true,
+            "enabled" : true,
+            "position" : [0.0,0.0,0.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [0.2,0.2,0.2],
+            "basecolor" : [0.0,1.0,0.0,1.0]
+
+        },
+        {
+            "id" : "aprop1",
+            "type" : "staticmesh",
+            "sm" : "cube",
+            "shadow" : true,
+            "enabled" : true,
+            "position" : [0.0,0.0,-5.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [1.0,0.0,1.0,1.0]
+
+        },
+		{
+            "id" : "aprop2",
+            "type" : "staticmesh",
+
+            "sm" : "cube",
+            "shadow" : true,
+
+            "enabled" : true,
+            "position" : [10.0,0.0,10.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [1.0,0.0,0.0,1.0]
+
+        },
+		{
+            "id" : "aprop3",
+            "type" : "staticmesh",
+            "sm" : "cube",
+            "shadow" : true,
+            "enabled" : true,
+            "position" : [10.0,0.0,-10.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [0.0,1.0,0.0,1.0]
+
+        },
+		{
+            "id" : "aprop4",
+            "type" : "staticmesh",
+            "sm" : "cube",
+            "shadow" : true,
+            "enabled" : true,
+            "position" : [-10.0,0.0,-10.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [1.0,0.0,0.0,1.0]
+
+        },
+		{
+            "id" : "aprop5",
+            "type" : "staticmesh",
+            "sm" : "cube",
+            "shadow" : true,
+            "enabled" : true,
+            "position" : [-10.0,0.0,10.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [0.0,0.0,1.0,1.0]
+
+        },
+		{
+		    "id" : "afloor",
+            "type" : "staticmesh",
+            "sm" : "cube",
+            "enabled" : true,
+            "shadow" : false,
+            "position" : [0.0,-2.0,0.0],
+            "orientation" : {
+                "axis" : [0.0,1.0,0.0],
+                "angle" : 0.0
+            },
+			"scale" : [100.0,0.1,100.0],
+            "basecolor" : [0.5,0.5,0.0,1.0]
+        
+		},
+        {
+            "id" : "alight",
+            "sm" : "",
+            "type" : "dirlight",
+            "enabled" :true,
+            "position" : [0.0,0.0,0.0],
+            "orientation" : {
+                "axis" : [1.0,1.0,0.0],
+                "angle" : -45.0
+
+                },
+            "scale" : [1.0,1.0,1.0],
+            "basecolor" : [0.2,0.2,0.2,1.0]
+        }
+
+    ],
+
+    "playerstartposition" : [0.0,0.0,0.0],
+    "playerstartrotationangle" : 0.0,
+    "playerstartrotationaxis" : [0.0,1.0,0.0],
+
+    "ambientlight" : [0.5,0.5,0.5,1.0],
+    "shadowplanenormal" : [0.0,1.0,0.0],
+    "shadowplanepoint" : [0.0,-0.5,0.0]
+   
+
+}

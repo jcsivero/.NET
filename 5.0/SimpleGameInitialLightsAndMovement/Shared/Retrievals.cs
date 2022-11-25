@@ -28,7 +28,7 @@ namespace SimpleGame{
         public string sm {get; set;}
         public bool enabled {get; set;}
         public bool shadow {get; set;}
-
+        public double[] shadowColor{get; set;} //agregado para color de sombras
         public string type {get; set;}
 
         public double[] position {get;set;}

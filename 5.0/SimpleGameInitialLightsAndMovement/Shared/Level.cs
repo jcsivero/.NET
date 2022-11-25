@@ -36,6 +36,7 @@ public class Actor{
     public ActorType Type {get; set;}
 
     public Vector4 BaseColor;
+    public Vector4 shadowColor;
 
     public Vector4 Direction;
     
@@ -148,6 +149,7 @@ for(int i=0;i<_retrievedLevel.actor_list.Length;i++){
     actor.Type = type;
     actor.BaseColor = new Vector4(retActor.basecolor);
     actor.Shadow = retActor.shadow;
+    actor.shadowColor = new Vector4(retActor.shadowColor);
 }
 
 PlayerStartPosition = new Vector3(_retrievedLevel.playerstartposition);

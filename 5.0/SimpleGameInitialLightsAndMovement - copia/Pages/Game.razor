@@ -1,0 +1,28 @@
+@page "/"
+@using System
+@layout Controller
+
+<div id="UIArea"  style="margin-left: 0.5em; margin-top: 2.5em; margin-right: 0.5em;">
+<h1>Simple WebGL Game Demo</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+</div>
+
+    <div>
+    <EditForm Model="@uiInteraction" OnSubmit="@uiInteraction.Update">
+        <InputText id="mouseEffect" @bind-Value="uiInteraction.MouseEffectInput" />
+        <InputText id="boomRate" @bind-Value="uiInteraction.BoomRateInput" />
+        <input type="submit" value="Submit"/>
+    </EditForm>
+    <p>Mouse X: @currentMouseX  Mouse Y: @currentMouseY</p>
+    <p>Yaw: @angles.Yaw Pitch: @angles.Pitch</p>
+    <p>Displacement Local: @LastDisplacementLocal </p>
+    <p>Displacement World: @LastDisplacementWorld</p>
+</div>
+<div id="GameArea"  style="margin-left: 0.5em; margin-top: 2.5em; margin-right: 0.5em ;
+padding: 2em 2em 2em 2em;border-width: 2px; border-color: black; border-style:solid;">
+    <BECanvas Width="500" Height="500" @ref="_canvasReference" ></BECanvas>
+</div>

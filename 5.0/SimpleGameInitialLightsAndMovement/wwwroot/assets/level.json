@@ -19,6 +19,7 @@
             "type" : "staticmesh",
             "sm" : "pawn",
             "shadow" : true,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [0.0,0.0,0.0],
             "orientation" : {
@@ -34,6 +35,7 @@
             "type" : "staticmesh",
             "sm" : "cube",
             "shadow" : true,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [0.0,0.0,-5.0],
             "orientation" : {
@@ -50,7 +52,7 @@
 
             "sm" : "cube",
             "shadow" : true,
-
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [10.0,0.0,10.0],
             "orientation" : {
@@ -66,6 +68,7 @@
             "type" : "staticmesh",
             "sm" : "cube",
             "shadow" : true,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [10.0,0.0,-10.0],
             "orientation" : {
@@ -81,6 +84,7 @@
             "type" : "staticmesh",
             "sm" : "cube",
             "shadow" : true,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [-10.0,0.0,-10.0],
             "orientation" : {
@@ -96,6 +100,7 @@
             "type" : "staticmesh",
             "sm" : "cube",
             "shadow" : true,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "enabled" : true,
             "position" : [-10.0,0.0,10.0],
             "orientation" : {
@@ -112,6 +117,7 @@
             "sm" : "cube",
             "enabled" : true,
             "shadow" : false,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "position" : [0.0,-2.0,0.0],
             "orientation" : {
                 "axis" : [0.0,1.0,0.0],
@@ -126,6 +132,8 @@
             "sm" : "",
             "type" : "dirlight",
             "enabled" :true,
+            "shadow" : false,
+            "shadowColor" : [0.0,0.0,0.0,1.0],
             "position" : [0.0,0.0,0.0],
             "orientation" : {
                 "axis" : [1.0,1.0,0.0],
