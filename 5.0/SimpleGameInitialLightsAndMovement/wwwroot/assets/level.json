@@ -19,7 +19,7 @@
             "type" : "staticmesh",
             "sm" : "pawn",
             "shadow" : true,
-            "shadowColor" : [0.0,0.0,0.0,1.0],
+            "shadowColor" : [1.0,1.0,0.0,1.0],
             "enabled" : true,
             "position" : [0.0,0.0,0.0],
             "orientation" : {
