@@ -469,7 +469,6 @@ private void calculateModelView(){
 
 
     }
-
     
     public async Task drawProgramShadow()
     {
@@ -485,14 +484,18 @@ private void calculateModelView(){
                 MeshBuffers mBuffers = BufferCollection[actor.StaticMeshId]; 
             
                 await this._context.UniformAsync(this.shadowColor,actor.shadowColor.GetArray()); 
+
+        // Buffers to attributes
+                await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER, mBuffers.VertexBuffer);
+                await this._context.EnableVertexAttribArrayAsync((uint)this.positionAttribLocation);
+                await this._context.VertexAttribPointerAsync((uint)this.positionAttribLocation,3, DataType.FLOAT, false, 0, 0L);                            
+                
+                await this._context.BindBufferAsync(BufferType.ELEMENT_ARRAY_BUFFER, mBuffers.IndexBuffer);
                 
                 foreach(var smv in actor.ModelViewShadow)
-                {
-                    // Update uniforms                    
-                        
-                    await this._context.UniformMatrixAsync(this.modelViewUniformLocation,false,smv.GetArray());     
-                    
-                    //para establecer las sombras                                                                                                  
+                {                    
+//para establecer las sombras                                                                                                  
+                    await this._context.UniformMatrixAsync(this.modelViewUniformLocation,false,smv.GetArray());                       
                     await this._context.DrawElementsAsync(Primitive.TRIANGLES,mBuffers.NumberOfIndices,DataType.UNSIGNED_SHORT, 0);
                 }
 
@@ -530,8 +533,6 @@ private void calculateModelView(){
         //await this._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
         drawProgramShadow();
         await this._context.EndBatchAsync();
-
-
         
     }
 
