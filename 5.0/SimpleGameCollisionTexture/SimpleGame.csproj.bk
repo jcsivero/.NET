@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <!-- <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" /> 
+    <PackageReference Include="C:\Users\josei_000\Documents\docencia\pov\Canvas-master\src\Blazor.Extensions.Canvas\Blazor.Exentions.Canvas.csproj" /> -->
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Canvas-master\src\Blazor.Extensions.Canvas\Blazor.Extensions.Canvas.csproj" />
+  </ItemGroup>
+
+</Project>

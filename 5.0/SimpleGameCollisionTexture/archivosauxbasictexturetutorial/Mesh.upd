@@ -1,0 +1,38 @@
+//  Mesh.h
+
+struct Vertex {
+
+	XMFLOAT3 pos;
+	XMFLOAT4 col;
+	XMFLOAT3 normal;
+	XMFLOAT2 uvcoords;
+
+};
+
+// Mesh.h Clase Mesh
+
+struct Texture {
+		std::string Name;
+		std::wstring Filename;
+		Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
+	};
+
+	std::unique_ptr<Texture> meshTexture;
+
+
+// Mesh.cpp Asegurar que estaas línas están en readfile para calcular el tamaño correcto
+
+isize = indices.size()*sizeof(unsigned int);
+vsize = vertices.size() * sizeof(Vertex);
+
+// Mesh.cpp líneas para leer UV
+
+for (auto i = 0; i < nvertices; i++) {
+		float u, v;
+		file >> u >> v;
+		XMFLOAT2 uv = XMFLOAT2(u, v);
+		vertices[i].uvcoords = uv;
+	}
+	
+	
