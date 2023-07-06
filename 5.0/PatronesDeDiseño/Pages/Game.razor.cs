@@ -53,7 +53,7 @@ public partial class Game : ComponentBase {
 
     private AffineMat4 CameraMat= new AffineMat4();
     private AffineMat4 ModelViewMat = new AffineMat4();
-    private AffineMat4 ProyMat = new AffineMat4();
+    public AffineMat4 ProyMat = new AffineMat4();
     private AffineMat4 NormalTransform = new AffineMat4();
 
     // Game state: User Interaction
@@ -67,7 +67,7 @@ public partial class Game : ComponentBase {
 
     protected BECanvasComponent _canvasReference;
 
-    private WebGLContext _context;
+    public WebGLContext _context;
 
       private const string vsSource=@"
     uniform mat4 uModelViewMatrix;
@@ -119,7 +119,7 @@ public partial class Game : ComponentBase {
     //gl_FragColor=vec4(max(vVertexNormal.x,0.0),max(vVertexNormal.y,0.0),max(vVertexNormal.z,0.0),1.0);
     }"; 
 
-    private const string fsSourceShadow=@"        
+ /*   private const string fsSourceShadow=@"        
     precision mediump float;
     uniform vec4 uShadowColor;
     void main(){
@@ -127,32 +127,32 @@ public partial class Game : ComponentBase {
     gl_FragColor=uShadowColor;
     
     }"; 
-
+*/
     private WebGLShader vertexShader;
     private WebGLShader fragmentShader;
-    private WebGLShader fragmentShadowShader; //para las sombras
+//    private WebGLShader fragmentShadowShader; //para las sombras
 
-    private WebGLProgram program;
-    private WebGLProgram programShadow; //shader de fragmentos solo pra pintar las sombras, según el color indicado en el atributo sombras del actor.
+    public WebGLProgram program;
+    //public WebGLProgram programShadow; //shader de fragmentos solo pra pintar las sombras, según el color indicado en el atributo sombras del actor.
 
 
-    private Dictionary<string,MeshBuffers> BufferCollection;
+    public Dictionary<string,MeshBuffers> BufferCollection;
 
-    private int positionAttribLocation;
-    private int normalAttribLocation;
-    private int colorAttribLocation;
+    public int positionAttribLocation;
+    public int normalAttribLocation;
+    public int colorAttribLocation;
 
-    private WebGLUniformLocation projectionUniformLocation;
-    private WebGLUniformLocation modelViewUniformLocation;
-    private WebGLUniformLocation normalTransformUniformLocation;
-    private WebGLUniformLocation baseColorLocation;
-    private WebGLUniformLocation ambientLightLocation;
+    public WebGLUniformLocation projectionUniformLocation;
+    public WebGLUniformLocation modelViewUniformLocation;
+    public WebGLUniformLocation normalTransformUniformLocation;
+    public WebGLUniformLocation baseColorLocation;
+    public WebGLUniformLocation ambientLightLocation;
     // Uniform for directional lights
 
-    private WebGLUniformLocation[] dirLightDirectionLocation;
-    private WebGLUniformLocation[] dirLightDiffuseLocation;
+    public WebGLUniformLocation[] dirLightDirectionLocation;
+    public WebGLUniformLocation[] dirLightDiffuseLocation;
 
-    private WebGLUniformLocation shadowColor; //para el atributo de sombre.
+//    public WebGLUniformLocation shadowColor; //para el atributo de sombre.
 
     private List<AffineMat4> ShadowMatrix = new List<AffineMat4>();
 
@@ -160,7 +160,7 @@ public partial class Game : ComponentBase {
     // WebGL related methods
     ////////////////////////////////////////////////////////////////////////////
     
-    private async Task<WebGLShader> GetShader(string code, ShaderType stype ){
+    public async Task<WebGLShader> GetShader(string code, ShaderType stype ){
 
         WebGLShader shader = await this._context.CreateShaderAsync(stype);
         await this._context.ShaderSourceAsync(shader,code);
@@ -176,7 +176,7 @@ public partial class Game : ComponentBase {
 
     }
 
-    private async Task<WebGLProgram> BuildProgram(WebGLShader vShader, WebGLShader fShader){
+    public async Task<WebGLProgram> BuildProgram(WebGLShader vShader, WebGLShader fShader){
         var prog = await this._context.CreateProgramAsync();
         await this._context.AttachShaderAsync(prog, vShader);
         await this._context.AttachShaderAsync(prog, fShader);
@@ -230,7 +230,7 @@ public partial class Game : ComponentBase {
     }
     
 
-    private async Task getAttributeLocations(WebGLProgram p){    
+    public async Task getAttributeLocations(WebGLProgram p){    
 
         this.positionAttribLocation = await this._context.GetAttribLocationAsync(p,"aVertexPosition");
         this.normalAttribLocation = await this._context.GetAttribLocationAsync(p,"aVertexNormal");
@@ -254,8 +254,8 @@ public partial class Game : ComponentBase {
     // Update stage related methods
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     public void InitializeGameState(){
+    
         GameFramework.Actor pawn = GetPawn();
 
         if(pawn==null)
@@ -409,130 +409,17 @@ private void calculateModelView(){
         calculateModelView();
     }
 
-    public async Task drawProgram()
-    { 
-
-        // Loop on lights for bindning uniforms
-        // Note that this is assuming this lights cam be dynamic
-        int counterProcessedLights=0;
-        foreach(var keyval in ActiveLevel.ActorCollection){
-            if(counterProcessedLights==this.NumberOfDirectionalLights)
-                break;
-            GameFramework.Actor actor = keyval.Value;
-            if(!actor.Enabled)
-                continue;
-            if(actor.Type==GameFramework.ActorType.Light){
-                await this._context.UniformAsync(this.dirLightDirectionLocation[counterProcessedLights],actor.Direction.GetArray());
-                await this._context.UniformAsync(this.dirLightDiffuseLocation[counterProcessedLights],actor.BaseColor.GetArray());
-                counterProcessedLights += 1;
-
-
-            }
-
-        }
-
-        // Loop on objects
-        foreach( var keyval in ActiveLevel.ActorCollection){
-            GameFramework.Actor actor = keyval.Value;
-            if(!actor.Enabled)
-                continue;
-
-            if(actor.Type==SimpleGame.GameFramework.ActorType.StaticMesh)
-            {
-            MeshBuffers mBuffers = BufferCollection[actor.StaticMeshId]; 
-
-            // Update uniforms
-            await this._context.UniformAsync(this.baseColorLocation,actor.BaseColor.GetArray());
-            await this._context.UniformMatrixAsync(this.modelViewUniformLocation,false,actor.ModelView.GetArray());
-            await this._context.UniformMatrixAsync(this.normalTransformUniformLocation,false,actor.NormalTransform.GetArray());
-
-            // Buffers to attributes
-            await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER, mBuffers.VertexBuffer);
-            await this._context.EnableVertexAttribArrayAsync((uint)this.positionAttribLocation);
-            await this._context.VertexAttribPointerAsync((uint)this.positionAttribLocation,3, DataType.FLOAT, false, 0, 0L);
-        
-            await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER, mBuffers.NormalBuffer);
-            await this._context.EnableVertexAttribArrayAsync((uint)this.normalAttribLocation);
-            await this._context.VertexAttribPointerAsync((uint)this.normalAttribLocation,3, DataType.FLOAT, false, 0, 0L);
-
-
-            await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER, mBuffers.ColorBuffer);
-            await this._context.EnableVertexAttribArrayAsync((uint)this.colorAttribLocation);
-            await this._context.VertexAttribPointerAsync((uint)this.colorAttribLocation,4, DataType.FLOAT, false, 0, 0L);
-        
-            await this._context.BindBufferAsync(BufferType.ELEMENT_ARRAY_BUFFER, mBuffers.IndexBuffer);
-
-            await this._context.DrawElementsAsync(Primitive.TRIANGLES,mBuffers.NumberOfIndices,DataType.UNSIGNED_SHORT, 0);
-
-            }
-        }
-
-
-    }
-    
-    public async Task drawProgramShadow()
-    {
-    // Loop on objects
-        foreach( var keyval in ActiveLevel.ActorCollection)
-        {
-            GameFramework.Actor actor = keyval.Value;
-            if(!actor.Enabled)
-                continue;
-
-            if(actor.Type==SimpleGame.GameFramework.ActorType.StaticMesh)
-            {
-                MeshBuffers mBuffers = BufferCollection[actor.StaticMeshId]; 
-            
-                await this._context.UniformAsync(this.shadowColor,actor.shadowColor.GetArray()); 
-
-        // Buffers to attributes
-                await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER, mBuffers.VertexBuffer);
-                await this._context.EnableVertexAttribArrayAsync((uint)this.positionAttribLocation);
-                await this._context.VertexAttribPointerAsync((uint)this.positionAttribLocation,3, DataType.FLOAT, false, 0, 0L);                            
-                
-                await this._context.BindBufferAsync(BufferType.ELEMENT_ARRAY_BUFFER, mBuffers.IndexBuffer);
-                
-                foreach(var smv in actor.ModelViewShadow)
-                {                    
-//para establecer las sombras                                                                                                  
-                    await this._context.UniformMatrixAsync(this.modelViewUniformLocation,false,smv.GetArray());                       
-                    await this._context.DrawElementsAsync(Primitive.TRIANGLES,mBuffers.NumberOfIndices,DataType.UNSIGNED_SHORT, 0);
-                }
-
-            }
-        }
-    }
+   
 
     ////////////////////////////////////////////////////////////////////////////////////
     /////////////////     RENDERING METHODS                           /////////////////
     ///////////////////////////////////////////////////////////////////////////////////
-    public async Task Draw(){
-     
-        // Object independent operations
-        await this._context.ClearColorAsync(0, 0, 1, 1);
-        await this._context.ClearDepthAsync(1.0f);
-        await this._context.DepthFuncAsync(CompareFunction.LEQUAL);
-        await this._context.EnableAsync(EnableCap.DEPTH_TEST);        
-        await this._context.ViewportAsync(0,0,this._context.DrawingBufferWidth,this._context.DrawingBufferHeight);
-         
-        await this.getAttributeLocations(program);
-        await this._context.UseProgramAsync(program);
-        await this._context.UniformMatrixAsync(this.projectionUniformLocation,false,this.ProyMat.GetArray());
-        await this._context.UniformAsync(this.ambientLightLocation,ActiveLevel.AmbientLight.GetArray());
 
-        await this._context.BeginBatchAsync();
-        await this._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
-        drawProgram();
-        await this._context.EndBatchAsync();
+    public async Task Draw(Command command){
+        
+        await command.Exec();
 
-
-        await this.getAttributeLocations(programShadow);
-        await this._context.UseProgramAsync(programShadow);
-        await this._context.UniformMatrixAsync(this.projectionUniformLocation,false,this.ProyMat.GetArray());        
-        await this._context.BeginBatchAsync();
-        //await this._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
-        drawProgramShadow();
-        await this._context.EndBatchAsync();
+        
         
     }
 
@@ -545,7 +432,9 @@ private void calculateModelView(){
 
             this.Update(timeStamp);
 
-            await this.Draw();
+            //await this.Draw();
+            await this.Draw(commandDrawProgram_);
+            await this.Draw(commandDrawProgramShadow_);
     }
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -555,6 +444,10 @@ private void calculateModelView(){
         private int windowHeight {get; set;}
         private int windowWidth {get; set;}
 
+        Command commandDrawProgram_;
+        Command commandDrawProgramShadow_;
+    
+            
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             var dimension = await JSRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
@@ -563,6 +456,7 @@ private void calculateModelView(){
             if(!firstRender)
                 return;
             
+
             dirLightDirectionLocation = new WebGLUniformLocation[this.NumberOfDirectionalLights];
             dirLightDiffuseLocation = new WebGLUniformLocation[this.NumberOfDirectionalLights];
 
@@ -597,20 +491,26 @@ private void calculateModelView(){
 
             // Getting the WebGL context
             this._context = await this._canvasReference.CreateWebGLAsync();
+            commandDrawProgram_ = new CommandDrawProgram(this);
+            commandDrawProgramShadow_ = new CommandDrawShadow(this);
 
             // Getting the program as part of the pipeline state
             this.vertexShader=await this.GetShader(vsSource,ShaderType.VERTEX_SHADER);
             this.fragmentShader=await this.GetShader(fsSource,ShaderType.FRAGMENT_SHADER);
 
             this.program= await this.BuildProgram(this.vertexShader,this.fragmentShader);            
+            await this._context.DeleteShaderAsync(this.vertexShader);
             await this._context.DeleteShaderAsync(this.fragmentShader);
 
             //preparo program con shader de sombras
-            this.fragmentShadowShader=await this.GetShader(fsSourceShadow,ShaderType.FRAGMENT_SHADER);
-            this.programShadow= await this.BuildProgram(this.vertexShader,this.fragmentShadowShader);
+            //this.fragmentShadowShader=await this.GetShader(fsSourceShadow,ShaderType.FRAGMENT_SHADER);
+            //this.programShadow= await this.BuildProgram(this.vertexShader,this.fragmentShadowShader);
 
-            await this._context.DeleteShaderAsync(this.vertexShader);
-            await this._context.DeleteShaderAsync(this.fragmentShadowShader);
+            
+            
+
+            //await this._context.DeleteShaderAsync(this.vertexShader);
+            //await this._context.DeleteShaderAsync(this.fragmentShadowShader);
             
 
             // Getting the pipeline buffers a part of the pipeline state
