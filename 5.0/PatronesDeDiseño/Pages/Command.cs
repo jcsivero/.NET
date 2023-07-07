@@ -1,19 +1,21 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-
-using Microsoft.JSInterop; //Interop for game loop rendering through Javascript
-using System.Net.Http;
-using System.Net.Http.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blazor.Extensions;
-using Blazor.Extensions.Canvas;
+using SimpleGame.Pages;
 using Blazor.Extensions.Canvas.WebGL;
+
+
 public abstract class Command 
 {
+    protected Game object_;
+    public WebGLShader vertexShader;
+    public WebGLShader fragmentShader; //para shader de fragmentos
+    public WebGLProgram program; //shader de fragmentos solo pra pintar las sombras, según el color indicado en el atributo sombras del actor.
+
+
 
     public abstract  Task  Exec();
-    //public abstract void SetFragmentShader(WebGLShader shader);
+
+    public virtual async Task  Initialize()
+    {
+
+    }
 }

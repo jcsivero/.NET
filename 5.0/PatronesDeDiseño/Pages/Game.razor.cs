@@ -1,20 +1,13 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-
 using Microsoft.JSInterop; //Interop for game loop rendering through Javascript
 using System.Net.Http;
-using System.Net.Http.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazor.Extensions;
-using Blazor.Extensions.Canvas;
 using Blazor.Extensions.Canvas.WebGL;
-
 using SimpleGame.Math;
 using SimpleGame.Shared;
-using SimpleGame;
 
 namespace SimpleGame.Pages {
 public partial class Game : ComponentBase {
@@ -69,73 +62,6 @@ public partial class Game : ComponentBase {
 
     public WebGLContext _context;
 
-      private const string vsSource=@"
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    uniform mat4 uNormalTransformMatrix;
-    attribute vec3 aVertexPosition;
-    attribute vec3 aVertexNormal;
-    attribute vec4 aVertexColor;
-    varying vec4 vVertexPosition;
-    varying vec4 vVertexNormal;
-    varying vec4 vVertexColor;
-    void main(void){
-    vVertexPosition = uProjectionMatrix*uModelViewMatrix*vec4(0.5*aVertexPosition,1.0);
-    vVertexNormal = uNormalTransformMatrix * vec4(aVertexNormal,0.0);
-    vVertexColor=aVertexColor;
-    gl_Position = vVertexPosition;
-    }";
-
-
-    private const string fsSource=@"    
-    precision mediump float;
-    varying vec4 vVertexColor;
-    varying vec4 vVertexNormal;
-    uniform vec4 uBaseColor;
-    uniform vec4 uAmbientLight;
-    uniform vec4 uDirLight0Diffuse;
-    uniform vec4 uDirLight0Direction;
-    uniform vec4 uDirLight1Diffuse;
-    uniform vec4 uDirLight1Direction;
-
-    void main(){
-    vec4 la = vec4(0.1,0.8,0.1,1.0);
-    vec4 ld = vec4(1.0,1.0,1.0,1.0);
-    vec3 ldir = vec3(1.0,1.0,1.5);
-    
-    float cl = max(dot(uDirLight0Direction.xyz,vVertexNormal.xyz),0.0);
-    vec4 newcolor = uAmbientLight*uBaseColor+vec4(cl*(uDirLight0Diffuse.rgb*uBaseColor.rgb),uDirLight0Diffuse.a*uBaseColor.a);
-
-    cl = max(dot(uDirLight1Direction.xyz,vVertexNormal.xyz),0.0);
-    newcolor = newcolor + vec4(cl*(uDirLight1Diffuse.rgb*uBaseColor.rgb),uDirLight1Diffuse.a*uBaseColor.a);
-
-    
-    //float cl = max(dot(ldir,vVertexNormal.xyz),0.0);    
-    //vec4 newcolor = la*uBaseColor+vec4(cl*(ld.rgb*uBaseColor.rgb),ld.a*uBaseColor.a);
-
-    //vec4 newcolor = la*vVertexColor+vec4(cl*(ld.rgb*vVertexColor.rgb),ld.a*vVertexColor.a);
-    gl_FragColor=newcolor;
-    //gl_FragColor=vVertexColor;
-    //gl_FragColor=vec4(max(vVertexNormal.x,0.0),max(vVertexNormal.y,0.0),max(vVertexNormal.z,0.0),1.0);
-    }"; 
-
- /*   private const string fsSourceShadow=@"        
-    precision mediump float;
-    uniform vec4 uShadowColor;
-    void main(){
-    
-    gl_FragColor=uShadowColor;
-    
-    }"; 
-*/
-    private WebGLShader vertexShader;
-    private WebGLShader fragmentShader;
-//    private WebGLShader fragmentShadowShader; //para las sombras
-
-    public WebGLProgram program;
-    //public WebGLProgram programShadow; //shader de fragmentos solo pra pintar las sombras, según el color indicado en el atributo sombras del actor.
-
-
     public Dictionary<string,MeshBuffers> BufferCollection;
 
     public int positionAttribLocation;
@@ -151,8 +77,6 @@ public partial class Game : ComponentBase {
 
     public WebGLUniformLocation[] dirLightDirectionLocation;
     public WebGLUniformLocation[] dirLightDiffuseLocation;
-
-//    public WebGLUniformLocation shadowColor; //para el atributo de sombre.
 
     private List<AffineMat4> ShadowMatrix = new List<AffineMat4>();
 
@@ -227,27 +151,6 @@ public partial class Game : ComponentBase {
         // Disconect buffers
         await this._context.BindBufferAsync(BufferType.ARRAY_BUFFER,null);
         await this._context.BindBufferAsync(BufferType.ELEMENT_ARRAY_BUFFER,null);
-    }
-    
-
-    public async Task getAttributeLocations(WebGLProgram p){    
-
-        this.positionAttribLocation = await this._context.GetAttribLocationAsync(p,"aVertexPosition");
-        this.normalAttribLocation = await this._context.GetAttribLocationAsync(p,"aVertexNormal");
-        this.colorAttribLocation = await this._context.GetAttribLocationAsync(p,"aVertexColor");
-
-        this.projectionUniformLocation=await this._context.GetUniformLocationAsync(p,"uProjectionMatrix");
-        this.modelViewUniformLocation = await this._context.GetUniformLocationAsync(p,"uModelViewMatrix");
-        this.normalTransformUniformLocation = await this._context.GetUniformLocationAsync(p,"uNormalTransformMatrix");
-        this.baseColorLocation=await this._context.GetUniformLocationAsync(p,"uBaseColor");
-        this.ambientLightLocation=await this._context.GetUniformLocationAsync(p,"uAmbientLight");
-        this.dirLightDiffuseLocation[0]=await this._context.GetUniformLocationAsync(p,"uDirLight0Diffuse");
-        this.dirLightDiffuseLocation[1]=await this._context.GetUniformLocationAsync(p,"uDirLight1Diffuse");
-        this.dirLightDirectionLocation[0]=await this._context.GetUniformLocationAsync(p,"uDirLight0Direction");
-        this.dirLightDirectionLocation[1]=await this._context.GetUniformLocationAsync(p,"uDirLight1Direction");
-        this.shadowColor=await this._context.GetUniformLocationAsync(p,"uShadowColor"); //variable uniform en programShadow
-
-
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -410,16 +313,16 @@ private void calculateModelView(){
     }
 
    
-
     ////////////////////////////////////////////////////////////////////////////////////
     /////////////////     RENDERING METHODS                           /////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////*
 
     public async Task Draw(Command command){
         
+
+
         await command.Exec();
 
-        
         
     }
 
@@ -432,9 +335,9 @@ private void calculateModelView(){
 
             this.Update(timeStamp);
 
-            //await this.Draw();
-            await this.Draw(commandDrawProgram_);
-            await this.Draw(commandDrawProgramShadow_);
+            
+             await this.Draw(commandDrawProgram_);
+             await this.Draw(commandDrawProgramShadow_);
     }
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -447,9 +350,8 @@ private void calculateModelView(){
         Command commandDrawProgram_;
         Command commandDrawProgramShadow_;
     
-            
         protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
+        {            
             var dimension = await JSRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
             this.windowHeight = dimension.Height;
             this.windowWidth = dimension.Width;
@@ -481,44 +383,18 @@ private void calculateModelView(){
 
             await ActiveLevel.RetrieveLevel(AssetsCollection);
 
-            // Initialize Rendering State
-            // Retrieving mesh
-            //retMesh = await HttpClient.GetFromJsonAsync<RetrievedMesh>("assets/mesh.json");
-            //Console.WriteLine($"Length normals:{retMesh.normals.Length}");
-            //remMest.usindices = new ushort[retMesh.indices.Length]
-            //retMesh.usindices = Array.ConvertAll<int,ushort>(retMesh.indices,delegate(int val){return (ushort)val;});
-            //Console.WriteLine($"Nvertces:{retMesh.nvertices}");
-
+  
             // Getting the WebGL context
             this._context = await this._canvasReference.CreateWebGLAsync();
             commandDrawProgram_ = new CommandDrawProgram(this);
             commandDrawProgramShadow_ = new CommandDrawShadow(this);
-
-            // Getting the program as part of the pipeline state
-            this.vertexShader=await this.GetShader(vsSource,ShaderType.VERTEX_SHADER);
-            this.fragmentShader=await this.GetShader(fsSource,ShaderType.FRAGMENT_SHADER);
-
-            this.program= await this.BuildProgram(this.vertexShader,this.fragmentShader);            
-            await this._context.DeleteShaderAsync(this.vertexShader);
-            await this._context.DeleteShaderAsync(this.fragmentShader);
-
-            //preparo program con shader de sombras
-            //this.fragmentShadowShader=await this.GetShader(fsSourceShadow,ShaderType.FRAGMENT_SHADER);
-            //this.programShadow= await this.BuildProgram(this.vertexShader,this.fragmentShadowShader);
-
-            
-            
-
-            //await this._context.DeleteShaderAsync(this.vertexShader);
-            //await this._context.DeleteShaderAsync(this.fragmentShadowShader);
-            
+            await commandDrawProgram_.Initialize();
+            await commandDrawProgramShadow_.Initialize();
+                        
 
             // Getting the pipeline buffers a part of the pipeline state
 
             await this.prepareBuffers();
-
-            // Storing the attribute locations
-            //await this.getAttributeLocations(program);
 
 
             // Other pipele state initial configurations

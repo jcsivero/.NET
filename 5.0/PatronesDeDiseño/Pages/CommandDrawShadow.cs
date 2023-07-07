@@ -4,8 +4,7 @@ using Blazor.Extensions.Canvas.WebGL;
 using System.Threading.Tasks;
 public  class CommandDrawShadow : Command
 {
-    private Game object_;
-    
+   
     private const string vsSource=@"
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
@@ -31,35 +30,35 @@ public  class CommandDrawShadow : Command
     gl_FragColor=uShadowColor;
     
     }"; 
-    private WebGLShader vertexShader;
-    private WebGLShader fragmentShader; //para las sombras
-    public WebGLProgram program; //shader de fragmentos solo pra pintar las sombras, según el color indicado en el atributo sombras del actor.
     public WebGLUniformLocation shadowColor; //para el atributo de sombra.
-    public CommandDrawShadow(Game value)
+    public  CommandDrawShadow(Game value)
     {
-        object_ = value;        
-        this.Initialize();
+        object_ = value;                
      
     }
-  //public abstract void SetFragmentShader(WebGLShader shader);
-
-    public async void  Initialize()
+  
+    public override async Task  Initialize()
     {
            vertexShader=await object_.GetShader(vsSource,ShaderType.VERTEX_SHADER);
            fragmentShader= await object_.GetShader(fsSource,ShaderType.FRAGMENT_SHADER);
-           program= await object_.BuildProgram(vertexShader,fragmentShader);
+           program= await object_.BuildProgram(vertexShader,this.fragmentShader);
            await object_._context.DeleteShaderAsync(vertexShader);
-           await object_._context.DeleteShaderAsync(fragmentShader);
+           await object_._context.DeleteShaderAsync(this.fragmentShader);
     }
+
     public override async Task  Exec()
     {
-       
-        await object_.getAttributeLocations(program);
+        await object_._context.ClearColorAsync(0, 0, 1, 1);
+        await object_._context.ClearDepthAsync(1.0f);
+        await object_._context.DepthFuncAsync(CompareFunction.LEQUAL);
+        await object_._context.EnableAsync(EnableCap.DEPTH_TEST);        
+        await object_._context.ViewportAsync(0,0,object_._context.DrawingBufferWidth,object_._context.DrawingBufferHeight);
+         
+        await getAttributeLocations(program);
         await object_._context.UseProgramAsync(program);
         await object_._context.UniformMatrixAsync(object_.projectionUniformLocation,false,object_.ProyMat.GetArray());        
-        await object_._context.BeginBatchAsync();
-        //await object_._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
-                
+        await object_._context.BeginBatchAsync();      
+        //await object_._context.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);                  
     
     // Loop on objects
         foreach( var keyval in object_.ActiveLevel.ActorCollection)
@@ -91,6 +90,25 @@ public  class CommandDrawShadow : Command
             }
         }
         await object_._context.EndBatchAsync();
+    }
+        public async Task getAttributeLocations(WebGLProgram p){    
+
+        object_.positionAttribLocation = await object_._context.GetAttribLocationAsync(p,"aVertexPosition");
+        object_.normalAttribLocation = await object_._context.GetAttribLocationAsync(p,"aVertexNormal");
+        object_.colorAttribLocation = await object_._context.GetAttribLocationAsync(p,"aVertexColor");
+
+        object_.projectionUniformLocation=await object_._context.GetUniformLocationAsync(p,"uProjectionMatrix");
+        object_.modelViewUniformLocation = await object_._context.GetUniformLocationAsync(p,"uModelViewMatrix");
+        object_.normalTransformUniformLocation = await object_._context.GetUniformLocationAsync(p,"uNormalTransformMatrix");
+        object_.baseColorLocation=await object_._context.GetUniformLocationAsync(p,"uBaseColor");
+        object_.ambientLightLocation=await object_._context.GetUniformLocationAsync(p,"uAmbientLight");
+        object_.dirLightDiffuseLocation[0]=await object_._context.GetUniformLocationAsync(p,"uDirLight0Diffuse");
+        object_.dirLightDiffuseLocation[1]=await object_._context.GetUniformLocationAsync(p,"uDirLight1Diffuse");
+        object_.dirLightDirectionLocation[0]=await object_._context.GetUniformLocationAsync(p,"uDirLight0Direction");
+        object_.dirLightDirectionLocation[1]=await object_._context.GetUniformLocationAsync(p,"uDirLight1Direction");
+        shadowColor=await object_._context.GetUniformLocationAsync(p,"uShadowColor"); //variable uniform en programShadow
+
+
     }
 }
 
